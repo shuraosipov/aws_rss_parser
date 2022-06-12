@@ -15,6 +15,10 @@
     ]
   },
   "context": {
+    "bucket_name": "shuraosipov-test",
+    "days_range": "10",
+    "email": "shuraosipov@gmail.com",
+    "layer_version_arn": "arn:aws:lambda:us-east-1:419091122511:layer:feedparser:1",
     "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
     "@aws-cdk/core:stackRelativeExports": true,
     "@aws-cdk/aws-rds:lowercaseDbIdentifier": true,

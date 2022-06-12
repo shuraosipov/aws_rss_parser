@@ -1,46 +1,31 @@
 
-# Welcome to your CDK Python project!
+## About AWS RSS Feed Parser
+This solution can be used to deploy a Lambda function that will parse content from an AWS RSS Feed and save entries to an S3 bucket. By default, Lambda will check the feed every midnight, and if new entries are found, they will be saved to S3 in a tabular form.
 
-This is a blank project for CDK development with Python.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
-
-To manually create a virtualenv on MacOS and Linux:
-
+## Create lambda layer
 ```
-$ python3 -m venv .venv
+$ cd build/
+$ bash create_new_layer.sh config
 ```
+## Configure context parameters
+Update `cdk.json` as following:
+* Copy lambda layer arn and update layer_version_arn' parameter in the `cdk.json` file.
+* Provide a human-readable bucket name.
+* Specify your email address to receive notifications.
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
+## Install dependencies
 ```
+$ python -m venv .venv
 $ source .venv/bin/activate
-```
-
-If you are a Windows platform, you would activate the virtualenv like this:
-
-```
-% .venv\Scripts\activate.bat
-```
-
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
 $ pip install -r requirements.txt
 ```
 
+## Deploy
 At this point you can now synthesize the CloudFormation template for this code.
 
 ```
 $ cdk synth
+$ cdk deploy
 ```
 
 To add additional dependencies, for example other CDK libraries, just add
@@ -56,3 +41,11 @@ command.
  * `cdk docs`        open CDK documentation
 
 Enjoy!
+
+
+## Usage
+Lambda will be triggered daily by EventBridge Scheduled Rule at 00:02 UTC time.
+You will receive an email with the execution status and the link to a file on S3 bucket.
+
+
+

@@ -1,0 +1,5 @@
+#!/bin/bash
+PYTHON_VERSION="python3.9"
+LAYER_NAME="feedparser"
+LAYER_DESCRIPTION="Layer containing feedparser library"
+BUCKET_NAME="shuraosipov-lambda-layers"
