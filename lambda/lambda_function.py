@@ -79,14 +79,14 @@ def upload_to_s3(file_name, bucket, object_name=None, topic_arn=None):
         sys.exit(1)
 
 def save_entries_as_table(feed, start_time, file_name) -> int:
-    count = 0
+    new_entries_counter = 0
     for entry in feed.entries:
         if string_to_date(entry.published) > start_time:
             row = format_entry_as_row(entry)
             # print(row)
             save_to_file(row, file_name)
-            count += 1
-    return count
+            new_entries_counter += 1
+    return new_entries_counter
 
 
 def check_if_feed_was_updated_recently(start_time, update_time):
