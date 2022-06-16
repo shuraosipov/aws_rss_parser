@@ -77,17 +77,17 @@ def upload_to_s3(file_name, bucket, object_name=None, topic_arn=None):
         subject='AWS Feed. Error when uploading file.'
         send_notification(topic_arn, message, subject)
         sys.exit(1)
-    
-    subject = "AWS Feed. New updates available!"
-    message = f"Check out new file at s3://{bucket}/{object_name}"
-    send_notification(topic_arn, message, subject)
 
-def save_entries_as_table(feed, start_time, file_name):
+def save_entries_as_table(feed, start_time, file_name) -> int:
+    count = 0
     for entry in feed.entries:
         if string_to_date(entry.published) > start_time:
             row = format_entry_as_row(entry)
             # print(row)
             save_to_file(row, file_name)
+            count += 1
+    return count
+
 
 def check_if_feed_was_updated_recently(start_time, update_time):
     feed_last_updated = string_to_date(update_time)
@@ -129,11 +129,18 @@ def lambda_handler(event, context):
     check_if_feed_was_updated_recently(start_time, feed_update_time)
 
     # When new entries are found, we want to extract them and save them in a tabular form.
-    save_entries_as_table(feed, start_time, output_file_name)
+    new_entries = save_entries_as_table(feed, start_time, output_file_name)
     
     # Finally, we upload the resulting file to S3.
     object_name = f"{current_date()}_{os.path.basename(output_file_name)}"
     upload_to_s3(output_file_name, BUCKET_NAME, object_name, TOPIC_ARN)
+
+    subject = "AWS Feed. New updates available!"
+    message = f"""
+    There are {new_entries} new releases.\n
+    Check out new file at s3://{BUCKET_NAME}/{object_name}
+    """
+    send_notification(TOPIC_ARN, message, subject)
 
     return {
         'statusCode': 200,
